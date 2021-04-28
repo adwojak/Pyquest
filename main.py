@@ -1,14 +1,36 @@
 import urllib3
 
-url = 'http://httpbin.org/robots.txt'
-
 
 http = urllib3.PoolManager()
-r = http.request('GET', url)
-
-print(r.status)
-print(r.data)
 
 
 class BaseRequest:
-    pass
+    URL = None
+    ALLOWED_METHODS = ['GET']
+
+    def _request(self, method):
+        if method in self.ALLOWED_METHODS:
+            return http.request(method, self.URL)
+        else:
+            raise Exception('Method not allowed')
+
+    def get(self):
+        return self._request('GET')
+
+    def post(self):
+        return self._request('POST')
+
+
+class HttpBin(BaseRequest):
+    URL = 'http://httpbin.org/anything/12'
+    ALLOWED_METHODS = ['GET', 'POST']
+
+
+def tmp_display(byte_data):
+    import json
+    return json.loads(byte_data.decode('utf-8'))
+
+
+http_bin = HttpBin()
+print(tmp_display(http_bin.get().data))
+print(tmp_display(http_bin.post().data))
