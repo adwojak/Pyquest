@@ -1,16 +1,12 @@
-from urllib3 import PoolManager
-
-
 class BaseRequest:
 
     BASE_URL = None
+    SESSION = None
     ENDPOINT = '/'
     ALLOWED_METHODS = ['GET']
 
-    def __init__(self):
-        self.http = PoolManager()  # TODO move to 'app' place or sth like that
-
-    def set_base_url(self, base_url):
+    def initialize_request(self, session, base_url):
+        self.SESSION = session
         self.BASE_URL = base_url
 
     @property
@@ -20,7 +16,7 @@ class BaseRequest:
     def _request(self, method):
         if method not in self.ALLOWED_METHODS:
             raise Exception("Method not allowed")
-        return self.http.request(method, self.url)
+        return getattr(self.SESSION, method.lower())(self.url)
 
     def get(self):
         response = self._request('GET')
