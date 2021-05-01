@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from base_request import BaseRequest
+from base_request import BaseRequest, Anything
 
 
 class BaseRouter(ABC):
@@ -14,14 +14,17 @@ class BaseRouter(ABC):
     def __init__(self):
         for attribute_name in self.__dir__():
             attribute = getattr(self, attribute_name)
-            if isinstance(attribute, BaseRequest):
-                attribute.set_base_url(self.BASE_URL)
+            aa = attribute
+            if type(attribute) is type and issubclass(attribute, BaseRequest):
+                attribute.set_base_url(base_url=self.BASE_URL)
+    #             attribute()
+                # import pdb;pdb.set_trace()
 
 
 class HttpRouter(BaseRouter):
     BASE_URL = "https://httpbin.org/"
 
-    anything = BaseRequest(endpoint='/anything')
+    anything = Anything()
 
 
 def tmp_display(response):
