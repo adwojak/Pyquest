@@ -105,7 +105,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-test_app/.flask
+.env
 .venv
 env/
 venv/
