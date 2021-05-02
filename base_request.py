@@ -111,3 +111,8 @@ class BaseRequest(HttpMethodHandler):
 class BasicResource(BaseRequest):
     ENDPOINT = '/basic'
     ALLOWED_METHODS = ['GET', 'POST']
+
+
+class ArgumentsResource(BaseRequest):
+    ENDPOINT = '/arguments'
+    ALLOWED_METHODS = ['POST', 'PUT']
