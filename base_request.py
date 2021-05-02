@@ -108,11 +108,16 @@ class BaseRequest(HttpMethodHandler):
         return self.session.request(method, self.url, **kwargs)
 
 
-class BasicResource(BaseRequest):
-    ENDPOINT = '/basic'
+class ExampleRequest(BaseRequest):
+    ENDPOINT = '/example'
     ALLOWED_METHODS = ['GET', 'POST']
 
 
-class ArgumentsResource(BaseRequest):
+class ArgumentsRequest(BaseRequest):
     ENDPOINT = '/arguments'
     ALLOWED_METHODS = ['POST', 'PUT']
+
+
+class JwtRequest(BaseRequest):
+    ENDPOINT = '/jwt'
+    ALLOWED_METHODS = ['GET', 'POST']
