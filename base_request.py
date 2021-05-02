@@ -82,25 +82,29 @@ class HttpMethodHandler(ABC):
 
 class BaseRequest(HttpMethodHandler):
 
-    BASE_URL = None
-    SESSION = None
     ENDPOINT = '/'
     ALLOWED_METHODS = ['GET']
 
+    def __init__(self):
+        # Session instance for requests sending
+        self.session = None
+        # Base url for calling requests
+        self.base_url = None
+
     def initialize_request(self, session, base_url):
-        self.SESSION = session
-        self.BASE_URL = base_url
+        self.session = session
+        self.base_url = base_url
 
     @property
     def url(self):
-        return f"{self.BASE_URL}{self.ENDPOINT}"
+        return f"{self.base_url}{self.ENDPOINT}"
 
     def _request(self, method, **kwargs):
         if method not in self.ALLOWED_METHODS:
             raise Exception("Method not allowed")
         if method in ALLOW_REDIRECTS_MAP:
             kwargs.setdefault('allow_redirects', ALLOW_REDIRECTS_MAP[method])
-        return self.SESSION.request(method, self.url, **kwargs)
+        return self.session.request(method, self.url, **kwargs)
 
 
 class Anything(BaseRequest):
