@@ -105,7 +105,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+test_app/.flask
 .venv
 env/
 venv/
@@ -140,3 +140,4 @@ cython_debug/
 # Custom
 .idea
 TODO
+test_app/flask_venv

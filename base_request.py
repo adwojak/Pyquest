@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from urllib.parse import urljoin
 
 
 ALLOW_REDIRECTS_MAP = {
@@ -97,7 +98,7 @@ class BaseRequest(HttpMethodHandler):
 
     @property
     def url(self):
-        return f"{self.base_url}{self.ENDPOINT}"
+        return urljoin(self.base_url, self.ENDPOINT)
 
     def _request(self, method, **kwargs):
         if method not in self.ALLOWED_METHODS:
@@ -107,6 +108,6 @@ class BaseRequest(HttpMethodHandler):
         return self.session.request(method, self.url, **kwargs)
 
 
-class Anything(BaseRequest):
-    ENDPOINT = '/anything'
+class BasicResource(BaseRequest):
+    ENDPOINT = '/basic'
     ALLOWED_METHODS = ['GET', 'POST']

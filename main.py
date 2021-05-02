@@ -1,13 +1,13 @@
-from base_request import Anything
+from base_request import BasicResource
 from base_router import BaseRouter
 
 
 class HttpRouter(BaseRouter):
-    BASE_URL = "https://httpbin.org/"
+    BASE_URL = "http://127.0.0.1:5000/"
 
-    anything = Anything()
+    basic_resource = BasicResource()
 
 
 http_router = HttpRouter()
-# print(http_router.anything.post(data={'example': 12}).json())
-print(http_router.anything.get(data={'example': 12}).json())
+response = http_router.basic_resource.get()
+print(response.json())
