@@ -9,4 +9,5 @@ class HttpRouter(BaseRouter):
 
 
 http_router = HttpRouter()
-print(http_router.anything.get().json())
+# print(http_router.anything.post(data={'example': 12}).json())
+print(http_router.anything.get(data={'example': 12}).json())
