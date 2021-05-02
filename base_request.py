@@ -24,8 +24,13 @@ class HttpMethodHandler(ABC):
         response = self._request('GET', **kwargs)
         return self.handle_get(response)
 
-    def handle_get(self, response):
-        return response
+    def options(self, **kwargs):
+        response = self._request('OPTIONS', **kwargs)
+        return self.handle_options(response)
+
+    def head(self, **kwargs):
+        response = self._request('HEAD', **kwargs)
+        return self.handle_head(response)
 
     def post(self, data=None, json=None, **kwargs):
         kwargs.update({
@@ -35,7 +40,43 @@ class HttpMethodHandler(ABC):
         response = self._request("POST", **kwargs)
         return self.handle_post(response)
 
+    def put(self, data=None, **kwargs):
+        kwargs.update({
+            'data': data,
+        })
+        response = self._request("PUT", **kwargs)
+        return self.handle_put(response)
+
+    def patch(self, data=None, **kwargs):
+        kwargs.update({
+            'data': data,
+        })
+        response = self._request("PATCH", **kwargs)
+        return self.handle_patch(response)
+
+    def delete(self, **kwargs):
+        response = self._request('DELETE', **kwargs)
+        return self.handle_delete(response)
+
+    def handle_get(self, response):
+        return response
+
+    def handle_options(self, response):
+        return response
+
+    def handle_head(self, response):
+        return response
+
     def handle_post(self, response):
+        return response
+
+    def handle_put(self, response):
+        return response
+
+    def handle_patch(self, response):
+        return response
+
+    def handle_delete(self, response):
         return response
 
 
