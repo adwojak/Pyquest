@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from urllib.parse import urljoin
+from pyquest.base_settings import MethodsSettings
 
 
 ALLOW_REDIRECTS_MAP = {
@@ -94,24 +95,6 @@ class HttpMethodHandler(ABC):
         return response
 
 
-class MethodsSettings:
-
-    def __init__(self, allowed_methods=None, allowed_method_details=None):
-        if not allowed_methods:
-            allowed_methods = []
-        if not allowed_method_details:
-            allowed_method_details = {}
-        self.methods = self.initialize_methods_settings(allowed_methods, allowed_method_details)
-
-    def initialize_methods_settings(self, allowed_methods, allowed_method_details):
-        methods = {}
-        for method in allowed_methods:
-            methods[method] = {}
-        for method, settings in allowed_method_details.items():
-            methods[method] = settings
-        return methods
-
-
 class BaseRequest(HttpMethodHandler, ABC):
 
     methods_settings = MethodsSettings(
@@ -140,7 +123,7 @@ class BaseRequest(HttpMethodHandler, ABC):
         return urljoin(self.base_url, self.ENDPOINT)
 
     def _request(self, method, **kwargs):
-        if method not in self.methods_settings.methods:
+        if method not in self.methods_settings.allowed_methods:
             raise Exception("Method not allowed")
         if method in ALLOW_REDIRECTS_MAP:
             kwargs.setdefault('allow_redirects', ALLOW_REDIRECTS_MAP[method])
@@ -194,7 +177,12 @@ class ExampleRequest(BaseRequest):
 class ArgumentsRequest(BaseRequest):
     ENDPOINT = '/arguments'
     methods_settings = MethodsSettings(
-        allowed_methods=['GET', 'POST', 'PUT']
+        allowed_methods=['GET', 'POST', 'PUT'],
+        allowed_method_details={
+            'GET': {
+                'require_jwt': True
+            }
+        }
     )
 
 
