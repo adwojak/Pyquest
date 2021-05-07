@@ -7,6 +7,7 @@ from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = "secret"
+app.config["PROPAGATE_EXCEPTIONS"] = True
 api = Api(app)
 jwt = JWTManager(app)
 load_dotenv('.env')

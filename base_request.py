@@ -171,12 +171,12 @@ class ExampleRequest(BaseRequest):
 
 class ArgumentsRequest(BaseRequest):
     ENDPOINT = '/arguments'
-    ALLOWED_METHODS = ['POST', 'PUT']
+    ALLOWED_METHODS = ['GET', 'POST', 'PUT']
 
 
 class JwtRequest(AuthBaseRequest):
     ENDPOINT = '/jwt'
-    ALLOWED_METHODS = ['GET', 'POST']
+    ALLOWED_METHODS = ['POST']
 
     def set_access_token(self, json_data):
         return json_data['access_token']

@@ -14,6 +14,10 @@ class ExampleResource(Resource):
 
 class ArgumentsResource(Resource):
 
+    @jwt_required()
+    def get(self):
+        return {'status': 'Authorized!'}
+
     def post(self):
         return request.form
 
@@ -23,10 +27,6 @@ class ArgumentsResource(Resource):
 
 class JwtResource(Resource):
     expires_in = timedelta(seconds=60)
-
-    @jwt_required()
-    def get(self):
-        return {'status': 'Authorized!'}
 
     def post(self):
         return {

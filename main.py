@@ -13,6 +13,7 @@ class HttpRouter(BaseRouter):
 http_router = HttpRouter()
 # response = http_router.example_request.get()
 # response = http_router.arguments_request.put(data={'param': 12})
+# response = http_router.arguments_request.get()
 
 # response = http_router.jwt.post()
 # authorization_header = f"Bearer {response.json()['access_token']}"
