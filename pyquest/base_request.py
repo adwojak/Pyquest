@@ -94,9 +94,29 @@ class HttpMethodHandler(ABC):
         return response
 
 
+class MethodsSettings:
+
+    def __init__(self, allowed_methods=None, allowed_method_details=None):
+        if not allowed_methods:
+            allowed_methods = []
+        if not allowed_method_details:
+            allowed_method_details = {}
+        self.methods = self.initialize_methods_settings(allowed_methods, allowed_method_details)
+
+    def initialize_methods_settings(self, allowed_methods, allowed_method_details):
+        methods = {}
+        for method in allowed_methods:
+            methods[method] = {}
+        for method, settings in allowed_method_details.items():
+            methods[method] = settings
+        return methods
+
+
 class BaseRequest(HttpMethodHandler, ABC):
 
-    ALLOWED_METHODS = ['GET']
+    methods_settings = MethodsSettings(
+        allowed_methods=['GET']
+    )
 
     @abstractmethod
     def ENDPOINT(self):
@@ -120,7 +140,7 @@ class BaseRequest(HttpMethodHandler, ABC):
         return urljoin(self.base_url, self.ENDPOINT)
 
     def _request(self, method, **kwargs):
-        if method not in self.ALLOWED_METHODS:
+        if method not in self.methods_settings.methods:
             raise Exception("Method not allowed")
         if method in ALLOW_REDIRECTS_MAP:
             kwargs.setdefault('allow_redirects', ALLOW_REDIRECTS_MAP[method])
@@ -166,17 +186,23 @@ class AuthBaseRequest(BaseRequest):
 
 class ExampleRequest(BaseRequest):
     ENDPOINT = '/example'
-    ALLOWED_METHODS = ['GET', 'POST']
+    methods_settings = MethodsSettings(
+        allowed_methods=['GET', 'POST']
+    )
 
 
 class ArgumentsRequest(BaseRequest):
     ENDPOINT = '/arguments'
-    ALLOWED_METHODS = ['GET', 'POST', 'PUT']
+    methods_settings = MethodsSettings(
+        allowed_methods=['GET', 'POST', 'PUT']
+    )
 
 
 class JwtRequest(AuthBaseRequest):
     ENDPOINT = '/jwt'
-    ALLOWED_METHODS = ['POST']
+    methods_settings = MethodsSettings(
+        allowed_methods=['POST']
+    )
 
     def set_access_token(self, json_data):
         return json_data['access_token']

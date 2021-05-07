@@ -15,8 +15,8 @@ http_router = HttpRouter()
 # response = http_router.arguments_request.put(data={'param': 12})
 # response = http_router.arguments_request.get()
 
-# response = http_router.jwt.post()
+response = http_router.jwt.post()
 # authorization_header = f"Bearer {response.json()['access_token']}"
 # response = http_router.jwt.get(headers={'authorization': authorization_header})
 #
-# print(response.json())
+print(response.json())
