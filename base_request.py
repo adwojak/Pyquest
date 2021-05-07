@@ -23,18 +23,18 @@ class HttpMethodHandler(ABC):
 
     def get(self, **kwargs):
         response = self._request('GET', **kwargs)
-        response = self.handle_get(response)
-        return self.finalize(response)
+        response = self.handle_get(response.status_code, response)
+        return self.finalize(response.status_code, response)
 
     def options(self, **kwargs):
         response = self._request('OPTIONS', **kwargs)
-        response = self.handle_options(response)
-        return self.finalize(response)
+        response = self.handle_options(response.status_code, response)
+        return self.finalize(response.status_code, response)
 
     def head(self, **kwargs):
         response = self._request('HEAD', **kwargs)
-        response = self.handle_head(response)
-        return self.finalize(response)
+        response = self.handle_head(response.status_code, response)
+        return self.finalize(response.status_code, response)
 
     def post(self, data=None, json=None, **kwargs):
         kwargs.update({
@@ -42,52 +42,55 @@ class HttpMethodHandler(ABC):
             'json': json,
         })
         response = self._request("POST", **kwargs)
-        response = self.handle_post(response)
-        return self.finalize(response)
+        response = self.handle_post(response.status_code, response)
+        return self.finalize(response.status_code, response)
 
     def put(self, data=None, **kwargs):
         kwargs.update({
             'data': data,
         })
         response = self._request("PUT", **kwargs)
-        response = self.handle_put(response)
-        return self.finalize(response)
+        response = self.handle_put(response.status_code, response)
+        return self.finalize(response.status_code, response)
 
     def patch(self, data=None, **kwargs):
         kwargs.update({
             'data': data,
         })
         response = self._request("PATCH", **kwargs)
-        response = self.handle_patch(response)
-        return self.finalize(response)
+        response = self.handle_patch(response.status_code, response)
+        return self.finalize(response.status_code, response)
 
     def delete(self, **kwargs):
         response = self._request('DELETE', **kwargs)
-        response = self.handle_delete(response)
-        return self.finalize(response)
+        response = self.handle_delete(response.status_code, response)
+        return self.finalize(response.status_code, response)
 
-    def finalize(self, response):
+    def finalize(self, status_code, response):
+        """
+        Common method for finalizing all of responses.
+        """
         return response
 
-    def handle_get(self, response):
+    def handle_get(self, status_code, response):
         return response
 
-    def handle_options(self, response):
+    def handle_options(self, status_code, response):
         return response
 
-    def handle_head(self, response):
+    def handle_head(self, status_code, response):
         return response
 
-    def handle_post(self, response):
+    def handle_post(self, status_code, response):
         return response
 
-    def handle_put(self, response):
+    def handle_put(self, status_code, response):
         return response
 
-    def handle_patch(self, response):
+    def handle_patch(self, status_code, response):
         return response
 
-    def handle_delete(self, response):
+    def handle_delete(self, status_code, response):
         return response
 
 
@@ -151,7 +154,7 @@ class AuthBaseRequest(BaseRequest):
         Returns expiration time from response object
         """
 
-    def finalize(self, response):
+    def finalize(self, status_code, response):
         self.set_tokens(response.json())
         return response
 
