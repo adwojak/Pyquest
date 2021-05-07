@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from urllib.parse import urljoin
-from pyquest.base_settings import MethodsSettings
+from pyquest.settings import MethodsSettings
 
 
 ALLOW_REDIRECTS_MAP = {

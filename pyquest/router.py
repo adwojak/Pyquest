@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from requests import Session
-from base_request import BaseRequest
+from request import BaseRequest
 
 
 class BaseRouter(ABC):
