@@ -19,4 +19,5 @@ response = http_router.jwt.post()
 # authorization_header = f"Bearer {response.json()['access_token']}"
 # response = http_router.jwt.get(headers={'authorization': authorization_header})
 #
+response = http_router.arguments.get()
 print(response.json())

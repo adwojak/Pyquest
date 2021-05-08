@@ -1,12 +1,8 @@
 class MethodSettings:
-    REQUIRE_JWT = 'require_jwt'
-
     def __init__(self, settings=None):
         if not settings:
             settings = {}
         self.settings = settings
-        if self.REQUIRE_JWT in settings:
-            self.require_jwt = settings[self.REQUIRE_JWT]
 
 
 class EndpointSettings:
@@ -32,3 +28,14 @@ class EndpointSettings:
             setattr(self, method, MethodSettings())
         for method, settings in allowed_method_details.items():
             setattr(self, method, MethodSettings(settings))
+
+
+class RouterSettings:
+    access_token = None
+    refresh_token = None
+    expiration_time = None
+
+    def set_tokens(self, access_token, refresh_token, expiration_time):
+        self.access_token = access_token
+        self.refresh_token = refresh_token
+        self.expiration_time = expiration_time

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from urllib.parse import urljoin
 from pyquest.settings import EndpointSettings
+from pyquest.authorization import BearerAuth
 
 
 ALLOW_REDIRECTS_MAP = {
@@ -113,58 +114,62 @@ class BaseRequest(HttpMethodHandler, ABC):
         self.session = None
         # Base url for calling requests
         self.base_url = None
+        # Settings of router object, where can be stored some tokens, session data and others
+        self.router_settings = None
 
-    def initialize_request(self, session, base_url):
+    def initialize_request(self, session, base_url, router_settings):
         self.session = session
         self.base_url = base_url
+        self.router_settings = router_settings
 
     @property
     def url(self):
         return urljoin(self.base_url, self.ENDPOINT)
 
+    def modify_headers(self, method, **kwargs):
+        if method in ALLOW_REDIRECTS_MAP:
+            kwargs.setdefault('allow_redirects', ALLOW_REDIRECTS_MAP[method])
+        return kwargs
+
     def _request(self, method, **kwargs):
         if method not in self.settings.allowed_methods:
             raise Exception("Method not allowed")
-        if method in ALLOW_REDIRECTS_MAP:
-            kwargs.setdefault('allow_redirects', ALLOW_REDIRECTS_MAP[method])
+        kwargs = self.modify_headers(method, **kwargs)
         return self.session.request(method, self.url, **kwargs)
 
 
 class AuthBaseRequest(BaseRequest):
-
-    def __init__(self):
-        super().__init__()
-
-        self.access_token = None
-        self.refresh_token = None
-        self.expires_in = None
-
+    @property
     @abstractmethod
-    def set_access_token(self, json_data):
-        """
-        Returns access token from response object
+    def ACCESS_TOKEN_PARAM(self):
         """
 
-    @abstractmethod
-    def set_refresh_token(self, json_data):
-        """
-        Returns refresh token from response object
         """
 
+    @property
     @abstractmethod
-    def set_expiration_time(self, json_data):
+    def REFRESH_TOKEN_PARAM(self):
         """
-        Returns expiration time from response object
+
+        """
+
+    @property
+    @abstractmethod
+    def EXPIRATION_TIME_PARAM(self):
+        """
+
         """
 
     def finalize(self, status_code, response):
-        self.set_tokens(response.json())
+        json_data = response.json()
+        access_token = json_data[self.ACCESS_TOKEN_PARAM]
+        self.router_settings.set_tokens(
+            access_token,
+            json_data[self.REFRESH_TOKEN_PARAM],
+            json_data[self.EXPIRATION_TIME_PARAM]
+        )
+        self.session.auth = BearerAuth(access_token)
         return response
-
-    def set_tokens(self, json_data):
-        self.access_token = self.set_access_token(json_data)
-        self.refresh_token = self.set_refresh_token(json_data)
-        self.expires_in = self.set_expiration_time(json_data)
 
 
 class ExampleRequest(BaseRequest):
@@ -178,11 +183,6 @@ class ArgumentsRequest(BaseRequest):
     ENDPOINT = '/arguments'
     settings = EndpointSettings(
         allowed_methods=['GET', 'POST', 'PUT'],
-        allowed_method_details={
-            'GET': {
-                'require_jwt': True
-            }
-        }
     )
 
 
@@ -191,12 +191,6 @@ class JwtRequest(AuthBaseRequest):
     settings = EndpointSettings(
         allowed_methods=['POST']
     )
-
-    def set_access_token(self, json_data):
-        return json_data['access_token']
-
-    def set_refresh_token(self, json_data):
-        return json_data['refresh_token']
-
-    def set_expiration_time(self, json_data):
-        return json_data['expires_in']
+    ACCESS_TOKEN_PARAM = 'access_token'
+    REFRESH_TOKEN_PARAM = 'refresh_token'
+    EXPIRATION_TIME_PARAM = 'expires_in'
