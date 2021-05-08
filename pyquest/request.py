@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from urllib.parse import urljoin
-from pyquest.settings import MethodsSettings
+from pyquest.settings import EndpointSettings
 
 
 ALLOW_REDIRECTS_MAP = {
@@ -97,7 +97,7 @@ class HttpMethodHandler(ABC):
 
 class BaseRequest(HttpMethodHandler, ABC):
 
-    methods_settings = MethodsSettings(
+    settings = EndpointSettings(
         allowed_methods=['GET']
     )
 
@@ -123,7 +123,7 @@ class BaseRequest(HttpMethodHandler, ABC):
         return urljoin(self.base_url, self.ENDPOINT)
 
     def _request(self, method, **kwargs):
-        if method not in self.methods_settings.allowed_methods:
+        if method not in self.settings.allowed_methods:
             raise Exception("Method not allowed")
         if method in ALLOW_REDIRECTS_MAP:
             kwargs.setdefault('allow_redirects', ALLOW_REDIRECTS_MAP[method])
@@ -169,14 +169,14 @@ class AuthBaseRequest(BaseRequest):
 
 class ExampleRequest(BaseRequest):
     ENDPOINT = '/example'
-    methods_settings = MethodsSettings(
+    settings = EndpointSettings(
         allowed_methods=['GET', 'POST']
     )
 
 
 class ArgumentsRequest(BaseRequest):
     ENDPOINT = '/arguments'
-    methods_settings = MethodsSettings(
+    settings = EndpointSettings(
         allowed_methods=['GET', 'POST', 'PUT'],
         allowed_method_details={
             'GET': {
@@ -188,7 +188,7 @@ class ArgumentsRequest(BaseRequest):
 
 class JwtRequest(AuthBaseRequest):
     ENDPOINT = '/jwt'
-    methods_settings = MethodsSettings(
+    settings = EndpointSettings(
         allowed_methods=['POST']
     )
 
