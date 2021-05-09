@@ -26,9 +26,17 @@ class ArgumentsResource(Resource):
 
 
 class JwtResource(Resource):
-    expires_in = timedelta(seconds=60)
+    expires_in = timedelta(seconds=1)
 
     def post(self):
+        form = request.form
+        if 'refresh_token' in form:
+            return {
+                'access_token': create_access_token(identity='example@email.com', expires_delta=self.expires_in),
+                'refresh_token': create_refresh_token(identity='example@email.com', expires_delta=self.expires_in),
+                'expires_in': self.expires_in.seconds,
+                'from_refresh': True
+            }
         return {
             'access_token': create_access_token(identity='example@email.com', expires_delta=self.expires_in),
             'refresh_token': create_refresh_token(identity='example@email.com', expires_delta=self.expires_in),

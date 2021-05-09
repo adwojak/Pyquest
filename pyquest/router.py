@@ -1,13 +1,12 @@
 from abc import ABC, abstractmethod
 from requests import Session
 from request import BaseRequest
-from pyquest.settings import RouterSettings
 
 
 class BaseRouter(ABC):
 
     SESSION = Session()
-    ROUTER_SETTINGS = RouterSettings()
+    SETTINGS = None
 
     @abstractmethod
     def BASE_URL(self):
@@ -20,4 +19,8 @@ class BaseRouter(ABC):
         for attribute_name in self.__dir__():
             attribute = getattr(self, attribute_name)
             if isinstance(attribute, BaseRequest):
-                attribute.initialize_request(self.SESSION, self.BASE_URL, self.ROUTER_SETTINGS)
+                attribute.initialize_request(self.SESSION, self.BASE_URL, self.SETTINGS)
+
+    # def __getattribute__(self, item):
+    #     print(item)
+    #     return super().__getattribute__(item)

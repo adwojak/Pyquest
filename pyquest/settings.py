@@ -30,12 +30,24 @@ class EndpointSettings:
             setattr(self, method, MethodSettings(settings))
 
 
-class RouterSettings:
-    access_token = None
-    refresh_token = None
-    expiration_time = None
+class JwtSettings:
+
+    def __init__(self):
+        # JWT access token
+        self.access_token = None
+        # JWT refresh token
+        self.refresh_token = None
+        # Expiration time of access token
+        self.expiration_time = None
 
     def set_tokens(self, access_token, refresh_token, expiration_time):
         self.access_token = access_token
         self.refresh_token = refresh_token
         self.expiration_time = expiration_time
+
+
+class RouterSettings:
+
+    def __init__(self):
+        # Settings of JWT authorization
+        self.jwt = JwtSettings()

@@ -135,10 +135,11 @@ class BaseRequest(HttpMethodHandler, ABC):
         if method not in self.settings.allowed_methods:
             raise Exception("Method not allowed")
         kwargs = self.modify_headers(method, **kwargs)
+        # Check if authorization is set, and if is, check if is still valid. If not, refresh
         return self.session.request(method, self.url, **kwargs)
 
 
-class AuthBaseRequest(BaseRequest):
+class JwtBaseRequest(BaseRequest):
     @property
     @abstractmethod
     def ACCESS_TOKEN_PARAM(self):
@@ -163,7 +164,7 @@ class AuthBaseRequest(BaseRequest):
     def finalize(self, status_code, response):
         json_data = response.json()
         access_token = json_data[self.ACCESS_TOKEN_PARAM]
-        self.router_settings.set_tokens(
+        self.router_settings.jwt.set_tokens(
             access_token,
             json_data[self.REFRESH_TOKEN_PARAM],
             json_data[self.EXPIRATION_TIME_PARAM]
@@ -186,7 +187,7 @@ class ArgumentsRequest(BaseRequest):
     )
 
 
-class JwtRequest(AuthBaseRequest):
+class JwtRequest(JwtBaseRequest):
     ENDPOINT = '/jwt'
     settings = EndpointSettings(
         allowed_methods=['POST']
